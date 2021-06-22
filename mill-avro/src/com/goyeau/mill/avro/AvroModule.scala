@@ -3,18 +3,20 @@ package com.goyeau.mill.avro
 import avrohugger.Generator
 import avrohugger.filesorter.{AvdlFileSorter, AvscFileSorter}
 import avrohugger.format.Standard
+import avrohugger.format.abstractions.SourceFormat
 import mill._
 import mill.define.Sources
-import mill.scalalib.JavaModule
+import mill.scalalib.ScalaModule
 import os.Path
 import java.io.File
 
-trait AvroModule extends JavaModule {
+trait AvroModule extends ScalaModule {
   def avroSources: Sources                             = T.sources(millSourcePath / "avro")
   def avroScalaCustomNamespace: T[Map[String, String]] = Map.empty[String, String]
+  def avroScalaFormat: T[SourceFormat]                 = T(Standard)
 
   override def generatedSources: T[Seq[PathRef]] = super.generatedSources() :+ generateScalaFromAvro(
-    Generator(format = Standard, avroScalaCustomNamespace = avroScalaCustomNamespace()),
+    Generator(format = avroScalaFormat(), avroScalaCustomNamespace = avroScalaCustomNamespace()),
     avroSources(),
     T.dest / "avro"
   )
