@@ -4,19 +4,31 @@ import avrohugger.Generator
 import avrohugger.filesorter.{AvdlFileSorter, AvscFileSorter}
 import avrohugger.format.Standard
 import avrohugger.format.abstractions.SourceFormat
+import avrohugger.types.AvroScalaTypes
+import java.io.File
+import java.util.UUID
 import mill._
 import mill.define.Sources
 import mill.scalalib.ScalaModule
 import os.Path
-import java.io.File
+import upickle.default.ReadWriter
 
 trait AvroModule extends ScalaModule {
+  implicit val avroScalaTypesRW: ReadWriter[AvroScalaTypes] = upickle.default
+    .readwriter[String]
+    .bimap[AvroScalaTypes](_ => UUID.randomUUID().toString, _ => ???)
+
   def avroSources: Sources                             = T.sources(millSourcePath / "avro")
   def avroScalaCustomNamespace: T[Map[String, String]] = Map.empty[String, String]
   def avroScalaFormat: T[SourceFormat]                 = T(Standard)
+  def avroScalaCustomTypes: T[AvroScalaTypes]          = T(avroScalaFormat().defaultTypes)
 
   override def generatedSources: T[Seq[PathRef]] = super.generatedSources() :+ generateScalaFromAvro(
-    Generator(format = avroScalaFormat(), avroScalaCustomNamespace = avroScalaCustomNamespace()),
+    Generator(
+      format = avroScalaFormat(),
+      avroScalaCustomTypes = Some(avroScalaCustomTypes()),
+      avroScalaCustomNamespace = avroScalaCustomNamespace()
+    ),
     avroSources(),
     T.dest / "avro"
   )
