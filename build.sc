@@ -28,7 +28,7 @@ class MillAvroCross(millVersion: String)
     ivy"com.lihaoyi::mill-scalalib:$millVersion"
   )
   override def ivyDeps = super.ivyDeps() ++ {
-    val version = "1.0.0-RC26"
+    val version = "1.0.0-RC29"
     Agg(
       ivy"com.julianpeeters::avrohugger-core:$version",
       ivy"com.julianpeeters::avrohugger-filesorter:$version"
