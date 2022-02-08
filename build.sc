@@ -1,7 +1,7 @@
-import $ivy.`com.goyeau::mill-git:0.2.2`
-import $ivy.`com.goyeau::mill-scalafix_mill0.9:0.2.7`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest_mill0.9:0.4.0`
-import $ivy.`io.github.davidgregory084::mill-tpolecat:0.2.0`
+import $ivy.`com.goyeau::mill-git::0.2.3`
+import $ivy.`com.goyeau::mill-scalafix::0.2.8`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.4.1-30-f29f55`
+import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.0`
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
 import de.tobiasroeser.mill.integrationtest._
@@ -28,7 +28,7 @@ class MillAvroCross(millVersion: String)
     ivy"com.lihaoyi::mill-scalalib:$millVersion"
   )
   override def ivyDeps = super.ivyDeps() ++ {
-    val version = "1.0.0-RC29"
+    val version = "1.0.0-RC30"
     Agg(
       ivy"com.julianpeeters::avrohugger-core:$version",
       ivy"com.julianpeeters::avrohugger-filesorter:$version"

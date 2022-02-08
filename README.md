@@ -1,9 +1,8 @@
 # mill-avro
 
-[![Latest version](https://index.scala-lang.org/joan38/mill-avro/mill-avro/latest.svg?color=lightgrey)](https://index.scala-lang.org/joan38/mill-avro/mill-avro)
+![Maven Central](https://img.shields.io/maven-central/v/com.goyeau/mill-avro_mill0.10_2.13)
 
 A Mill plugin for generating Scala case classes and ADTs from Apache Avro schemas, datafiles, and protocols.
-
 
 
 ## Related projects
