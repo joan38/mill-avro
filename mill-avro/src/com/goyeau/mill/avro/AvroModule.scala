@@ -7,27 +7,32 @@ import avrohugger.format.abstractions.SourceFormat
 import avrohugger.types.AvroScalaTypes
 import java.io.File
 import java.util.UUID
-import mill._
+import mill.*
 import mill.define.Sources
 import mill.scalalib.ScalaModule
+import mill.scalalib.api.ZincWorkerUtil.scalaBinaryVersion
 import os.Path
 import upickle.default.ReadWriter
 
 trait AvroModule extends ScalaModule {
+  implicit def sourceFormatRW[F <: SourceFormat]: ReadWriter[F] = upickle.default
+    .readwriter[String]
+    .bimap[F](_ => UUID.randomUUID().toString, _ => ???)
   implicit val avroScalaTypesRW: ReadWriter[AvroScalaTypes] = upickle.default
     .readwriter[String]
     .bimap[AvroScalaTypes](_ => UUID.randomUUID().toString, _ => ???)
 
   def avroSources: Sources                             = T.sources(millSourcePath / "avro")
   def avroScalaCustomNamespace: T[Map[String, String]] = Map.empty[String, String]
-  def avroScalaFormat: T[SourceFormat]                 = T(Standard)
-  def avroScalaCustomTypes: T[AvroScalaTypes]          = T(avroScalaFormat().defaultTypes)
+  def avroScalaFormat: T[SourceFormat]                 = Standard
+  def avroScalaCustomTypes: T[AvroScalaTypes]          = avroScalaFormat().defaultTypes
 
   override def generatedSources: T[Seq[PathRef]] = super.generatedSources() :+ generateScalaFromAvro(
     Generator(
       format = avroScalaFormat(),
       avroScalaCustomTypes = Some(avroScalaCustomTypes()),
-      avroScalaCustomNamespace = avroScalaCustomNamespace()
+      avroScalaCustomNamespace = avroScalaCustomNamespace(),
+      targetScalaPartialVersion = scalaBinaryVersion(scalaVersion())
     ),
     avroSources(),
     T.dest / "avro"

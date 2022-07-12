@@ -1,7 +1,7 @@
 import $ivy.`com.goyeau::mill-git::0.2.3`
-import $ivy.`com.goyeau::mill-scalafix::0.2.8`
-import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.4.1-30-f29f55`
-import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.0`
+import $ivy.`com.goyeau::mill-scalafix::0.2.10`
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.6.1`
+import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.1`
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
 import de.tobiasroeser.mill.integrationtest._
@@ -11,7 +11,7 @@ import mill.scalalib._
 import mill.scalalib.api.Util.scalaNativeBinaryVersion
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 
-val millVersions                           = Seq("0.10.0", "0.9.12")
+val millVersions                           = Seq("0.10.5")
 def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion)
 
 object `mill-avro` extends Cross[MillAvroCross](millVersions: _*)
@@ -20,7 +20,7 @@ class MillAvroCross(millVersion: String)
     with TpolecatModule
     with StyleModule
     with GitVersionedPublishModule {
-  override def crossScalaVersion = "2.13.7"
+  override def crossScalaVersion = "2.13.8"
   override def artifactSuffix    = s"_mill${millBinaryVersion(millVersion)}" + super.artifactSuffix()
 
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
@@ -28,7 +28,7 @@ class MillAvroCross(millVersion: String)
     ivy"com.lihaoyi::mill-scalalib:$millVersion"
   )
   override def ivyDeps = super.ivyDeps() ++ {
-    val version = "1.0.0-RC30"
+    val version = "1.0.0"
     Agg(
       ivy"com.julianpeeters::avrohugger-core:$version",
       ivy"com.julianpeeters::avrohugger-filesorter:$version"
