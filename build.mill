@@ -1,0 +1,52 @@
+import $ivy.`com.goyeau::mill-git::0.2.7`
+import $ivy.`com.goyeau::mill-scalafix::0.4.2`
+import $ivy.`org.typelevel::scalac-options:0.1.7`
+import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
+import com.goyeau.mill.scalafix.StyleModule
+import mill._
+import mill.scalalib._
+import mill.scalalib.api.ZincWorkerUtil.scalaNativeBinaryVersion
+import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
+import org.typelevel.scalacoptions.ScalacOptions._
+import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
+
+object `mill-avro` extends Cross[MillAvroCross]("0.10.5", "0.12.0")
+trait MillAvroCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule {
+  val millVersion           = crossValue
+  override def scalaVersion = "2.13.13"
+  override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
+    ScalaVersion.unsafeFromString(scalaVersion()),
+    ScalacOptions.default + source3 ++ fatalWarningOptions
+  )
+
+  override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
+    ivy"com.lihaoyi::mill-main:$millVersion",
+    ivy"com.lihaoyi::mill-scalalib:$millVersion"
+  )
+  override def ivyDeps = super.ivyDeps() ++ avroHugger
+
+  lazy val avroHugger = {
+    val version = "1.0.0"
+    Agg(
+      ivy"com.julianpeeters::avrohugger-core:$version",
+      ivy"com.julianpeeters::avrohugger-filesorter:$version"
+    )
+  }
+
+  override def artifactName   = s"mill-avro_mill${millBinaryVersion(millVersion)}"
+  override def publishVersion = GitVersionModule.version(withSnapshotSuffix = true)()
+  def pomSettings = PomSettings(
+    description =
+      "A Mill plugin for generating Scala case classes and ADTs from Apache Avro schemas, datafiles, and protocols",
+    organization = "com.goyeau",
+    url = "https://github.com/joan38/mill-avro",
+    licenses = Seq(License.MIT),
+    versionControl = VersionControl.github("joan38", "mill-avro"),
+    developers = Seq(Developer("joan38", "Joan Goyeau", "https://github.com/joan38"))
+  )
+}
+
+def millBinaryVersion(millVersion: String) = scalaNativeBinaryVersion(millVersion) match {
+  case "0.12"  => "0.11" // 0.12.x is binary compatible with 0.11.x
+  case version => version
+}

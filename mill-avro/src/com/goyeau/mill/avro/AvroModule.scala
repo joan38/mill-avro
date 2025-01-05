@@ -8,7 +8,7 @@ import avrohugger.types.AvroScalaTypes
 import java.io.File
 import java.util.UUID
 import mill.*
-import mill.define.Sources
+import mill.api.PathRef
 import mill.scalalib.ScalaModule
 import mill.scalalib.api.ZincWorkerUtil.scalaBinaryVersion
 import os.Path
@@ -22,7 +22,7 @@ trait AvroModule extends ScalaModule {
     .readwriter[String]
     .bimap[AvroScalaTypes](_ => UUID.randomUUID().toString, _ => ???)
 
-  def avroSources: Sources                             = T.sources(millSourcePath / "avro")
+  def avroSources: T[Seq[PathRef]]                     = T.sources(millSourcePath / "avro")
   def avroScalaCustomNamespace: T[Map[String, String]] = Map.empty[String, String]
   def avroScalaFormat: T[SourceFormat]                 = Standard
   def avroScalaCustomTypes: T[AvroScalaTypes]          = avroScalaFormat().defaultTypes
