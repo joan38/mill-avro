@@ -26,7 +26,7 @@ trait MillAvroCross extends Cross.Module[String] with StyleModule with GitVersio
   override def ivyDeps = super.ivyDeps() ++ avroHugger
 
   lazy val avroHugger = {
-    val version = "1.0.0"
+    val version = "2.12.0"
     Agg(
       ivy"com.julianpeeters::avrohugger-core:$version",
       ivy"com.julianpeeters::avrohugger-filesorter:$version"
