@@ -1,18 +1,20 @@
 package com.goyeau.mill.avro
 
 import avrohugger.Generator
-import avrohugger.filesorter.{AvdlFileSorter, AvscFileSorter}
+import avrohugger.filesorter.AvdlFileSorter
+import avrohugger.filesorter.AvscFileSorter
 import avrohugger.format.Standard
 import avrohugger.format.abstractions.SourceFormat
 import avrohugger.types.AvroScalaTypes
-import java.io.File
-import java.util.UUID
 import mill.*
 import mill.api.PathRef
 import mill.scalalib.ScalaModule
 import mill.scalalib.api.ZincWorkerUtil.scalaBinaryVersion
 import os.Path
 import upickle.default.ReadWriter
+
+import java.io.File
+import java.util.UUID
 
 trait AvroModule extends ScalaModule {
   implicit def sourceFormatRW[F <: SourceFormat]: ReadWriter[F] = upickle.default
