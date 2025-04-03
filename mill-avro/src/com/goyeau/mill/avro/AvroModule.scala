@@ -9,7 +9,7 @@ import avrohugger.types.AvroScalaTypes
 import mill.*
 import mill.api.PathRef
 import mill.scalalib.ScalaModule
-import mill.scalalib.api.ZincWorkerUtil.scalaBinaryVersion
+import mill.scalalib.api.JvmWorkerUtil.scalaBinaryVersion
 import os.Path
 import upickle.default.ReadWriter
 
