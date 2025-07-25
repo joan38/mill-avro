@@ -8,8 +8,8 @@ import avrohugger.format.abstractions.SourceFormat
 import avrohugger.types.AvroScalaTypes
 import mill.*
 import mill.api.PathRef
+import mill.javalib.api.JvmWorkerUtil.scalaBinaryVersion
 import mill.scalalib.ScalaModule
-import mill.scalalib.api.JvmWorkerUtil.scalaBinaryVersion
 import os.Path
 import upickle.default.ReadWriter
 
@@ -37,7 +37,7 @@ trait AvroModule extends ScalaModule {
       targetScalaPartialVersion = scalaBinaryVersion(scalaVersion())
     ),
     avroSources(),
-    T.dest / "avro"
+    Task.dest / "avro"
   )
 
   private def generateScalaFromAvro(generator: Generator, avroSources: Seq[PathRef], out: Path) = {
