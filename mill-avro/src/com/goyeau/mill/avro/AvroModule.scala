@@ -16,7 +16,7 @@ import upickle.default.ReadWriter
 import java.io.File
 import java.util.UUID
 
-trait AvroModule extends ScalaModule {
+trait AvroModule extends ScalaModule:
   implicit def sourceFormatRW[F <: SourceFormat]: ReadWriter[F] = upickle.default
     .readwriter[String]
     .bimap[F](_ => UUID.randomUUID().toString, _ => ???)
@@ -40,7 +40,7 @@ trait AvroModule extends ScalaModule {
     Task.dest / "avro"
   )
 
-  private def generateScalaFromAvro(generator: Generator, avroSources: Seq[PathRef], out: Path) = {
+  private def generateScalaFromAvro(generator: Generator, avroSources: Seq[PathRef], out: Path) =
     AvscFileSorter.sortSchemaFiles(filesFor(avroSources, "avsc")).foreach { avroFile =>
       println(s"Generating case classes from AVSC $avroFile")
       generator.fileToFile(avroFile, out.toString)
@@ -62,14 +62,12 @@ trait AvroModule extends ScalaModule {
     }
 
     PathRef(out)
-  }
 
   private def filesFor(sources: Seq[PathRef], extension: String): Seq[File] =
-    for {
+    for
       path <- sources.map(_.path)
       if os.exists(path)
       file <-
-        if (os.isDir(path)) os.walk(path).filter(file => os.isFile(file) && (file.ext == extension))
+        if os.isDir(path) then os.walk(path).filter(file => os.isFile(file) && (file.ext == extension))
         else Seq(path)
-    } yield file.toIO
-}
+    yield file.toIO
