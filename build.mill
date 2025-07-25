@@ -1,36 +1,41 @@
-import $repo.`https://oss.sonatype.org/content/repositories/snapshots`
-import $ivy.`com.goyeau::mill-git::0.2.7-15-733a3c7-SNAPSHOT`
-import $ivy.`com.goyeau::mill-scalafix::0.5.1-12-8dee44c-SNAPSHOT`
-import $ivy.`org.typelevel::scalac-options:0.1.7`
+//| mill-version: 1.0.1-native
+//| mvnDeps:
+//| - com.goyeau::mill-git::0.3.0
+//| - com.goyeau::mill-scalafix::0.6.0
+//| - org.typelevel::scalac-options:0.1.8
+
 import com.goyeau.mill.git.{GitVersionModule, GitVersionedPublishModule}
 import com.goyeau.mill.scalafix.StyleModule
 import mill.*
-import mill.define.Cross
+import mill.api.Cross
 import mill.scalalib.*
 import mill.scalalib.publish.{Developer, License, PomSettings, VersionControl}
 import org.typelevel.scalacoptions.ScalacOptions.*
 import org.typelevel.scalacoptions.{ScalaVersion, ScalacOptions}
 
-object `mill-avro` extends Cross[MillAvroCross]("0.13.0-M1")
-trait MillAvroCross extends Cross.Module[String] with StyleModule with GitVersionedPublishModule:
-  val millVersion = crossValue
-  override def scalaVersion = "3.6.3"
+object `mill-avro` extends Cross[MillAvroCross]("1.0.0")
+trait MillAvroCross
+    extends Cross.Module[String]
+    with StyleModule
+    with GitVersionedPublishModule
+    with SonatypeCentralPublishModule:
+  val millVersion           = crossValue
+  override def scalaVersion = "3.7.1"
   override def scalacOptions = super.scalacOptions() ++ ScalacOptions.tokensForVersion(
     ScalaVersion.unsafeFromString(scalaVersion()),
     ScalacOptions.default + source3 ++ fatalWarningOptions
   )
 
-  override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
-    ivy"com.lihaoyi::mill-main:$millVersion",
-    ivy"com.lihaoyi::mill-scalalib:$millVersion"
+  override def compileMvnDeps = super.compileMvnDeps() ++ Seq(
+    mvn"com.lihaoyi::mill-libs-scalalib:$millVersion"
   )
-  override def ivyDeps = super.ivyDeps() ++ avroHugger
+  override def mvnDeps = super.mvnDeps() ++ avroHugger
 
   lazy val avroHugger =
     val version = "2.12.0"
-    Agg(
-      ivy"com.julianpeeters::avrohugger-core:$version",
-      ivy"com.julianpeeters::avrohugger-filesorter:$version"
+    Seq(
+      mvn"com.julianpeeters::avrohugger-core:$version",
+      mvn"com.julianpeeters::avrohugger-filesorter:$version"
     )
 
   override def artifactName   = s"mill-avro_mill${millBinaryVersion(millVersion)}"
@@ -48,5 +53,5 @@ end MillAvroCross
 
 def millBinaryVersion(millVersion: String) = millVersion match
   case version if version.startsWith("0.12") => "0.11" // 0.12.x is binary compatible with 0.11.x
-  case version if version.startsWith("0.13") => "0.13.0-M1"
+  case version if version.startsWith("1.")   => "1"
   case _ => throw IllegalArgumentException(s"Unsupported Mill version: $millVersion")
